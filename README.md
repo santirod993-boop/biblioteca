@@ -13,7 +13,7 @@ Trabajo Final Integrador - Algoritmos y Estructuras de Datos - ISI - Ciclo 2026
 
 ## Comisión
 
-Completar comisión asignada.
+
 
 ## Descripción general del sistema
 
