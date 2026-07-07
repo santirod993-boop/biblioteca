@@ -57,7 +57,7 @@ acumuladores para llevar el registro de préstamos, devoluciones y multas.
 ## Diseño previo (pseudocódigo)
 
 Antes de programar, el equipo diseñó la lógica del sistema en pseudocódigo con ayuda de IA
-(formato Ambiente/Proceso). El archivo se encuentra en
+(formato Ambiente/Proceso). El archivo se encuentra en (biblioteca/pseudocodigo)
 
 
 ## Uso de Inteligencia Artificial
