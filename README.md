@@ -37,9 +37,9 @@ acumuladores para llevar el registro de préstamos, devoluciones y multas.
 
 ## Instrucciones de ejecución
 
-1. Tener instalado Python 3 en la computadora.
-2. Descargar o clonar este repositorio.
-3. Abrir una terminal en la carpeta del proyecto.
+1. Tener instalado Python 3 y vscode (con sus respectivas extensiones de pyton que son Pylance,python,python debugger,python environments) en la computadora.
+2. entrar a vscode y dirigirse a archivo, crear nuevo archivo, y elegir la opcion archivo de python.
+3. Descargar o clonar este repositorio y insertarlo en vscode y correrlo.
 4. Se mostrará un menú por consola. Ingresar el número de la opción deseada
    y seguir las instrucciones en pantalla.
 
