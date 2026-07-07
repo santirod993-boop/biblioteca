@@ -11,10 +11,6 @@ Trabajo Final Integrador - Algoritmos y Estructuras de Datos - ISI - Ciclo 2026
 
 
 
-## Comisión
-
-
-
 ## Descripción general del sistema
 
 Este sistema simula el funcionamiento de una biblioteca mediante una aplicación
