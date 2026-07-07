@@ -1,0 +1,305 @@
+ACCIÓN Biblioteca ES
+
+AMBIENTE
+
+MAX_LIBROS = 100
+MAX_USUARIOS = 100
+MAX_PRESTAMOS = 500
+PLAZO_MAXIMO_DIAS = 7
+MULTA_POR_DIA = 100
+
+Libro = REGISTRO
+    isbn: alfanumérico(20)
+    titulo: alfanumérico(20)
+    autor: alfanumérico(20)
+    total: entero
+    disponibles: entero
+    cantidad_prestamos: entero
+FINREGISTRO
+
+Usuario = REGISTRO
+    dni: alfanumérico
+    nombre: alfanumérico
+FINREGISTRO
+
+Prestamo = REGISTRO
+    dni: alfanumérico(10)
+    isbn: alfanumérico(20)
+    dia_prestamo: entero
+    dia_devolucion: entero
+    activo: lógico
+FINREGISTRO
+
+cant_libros, cant_usuarios, cant_prestamos: entero
+contador_prestamos_totales: entero
+contador_devoluciones_totales: entero
+total_recaudado_multas: real
+
+opcion: entero
+
+dni, nombre, isbn, titulo, autor: alfanumérico(20)
+cantidad, cantidad_extra: entero
+pos_usuario, pos_libro, pos_prestamo: entero
+dia_prestamo, dia_devolucion: entero
+dias_transcurridos, dias_atraso: entero
+multa: real
+i: entero
+existe: lógico
+max_prestamos, pos_mas_solicitado: entero
+
+
+PROCESO
+
+cant_libros := 0
+cant_usuarios := 0
+cant_prestamos := 0
+contador_prestamos_totales := 0
+contador_devoluciones_totales := 0
+total_recaudado_multas := 0
+
+REPETIR
+
+    ESC("============ BIBLIOTECA ============")
+    ESC("1. Registrar usuario")
+    ESC("2. Registrar libro")
+    ESC("3. Prestar libro")
+    ESC("4. Devolver libro")
+    ESC("5. Ver disponibilidad de libros")
+    ESC("6. Ver préstamos activos")
+    ESC("7. Ver estadísticas")
+    ESC("8. Salir")
+    ESC("Ingrese una opción:")
+    LEER(opcion)
+
+    SEGÚN opcion HACER
+
+        1:
+            ESC("Ingrese DNI del usuario:")
+            LEER(dni)
+
+            existe := FALSO
+            PARA i := 1 HASTA cant_usuarios HACER
+                SI usuarios[i].dni = dni ENTONCES
+                    existe := VERDADERO
+                FINSI
+            FINPARA
+
+            SI existe = VERDADERO ENTONCES
+                ESC("Ya existe un usuario con ese DNI.")
+            SINO
+                ESC("Ingrese nombre y apellido:")
+                LEER(nombre)
+
+                cant_usuarios := cant_usuarios + 1
+                usuarios[cant_usuarios].dni := dni
+                usuarios[cant_usuarios].nombre := nombre
+
+                ESC("Usuario registrado correctamente.")
+            FINSI
+
+        2:
+            ESC("Ingrese ISBN o código del libro:")
+            LEER(isbn)
+
+            pos_libro := 0
+            PARA i := 1 HASTA cant_libros HACER
+                SI libros[i].isbn = isbn ENTONCES
+                    pos_libro := i
+                FINSI
+            FINPARA
+
+            SI pos_libro <> 0 ENTONCES
+                ESC("El libro ya existe. Ingrese cantidad de ejemplares a agregar:")
+                LEER(cantidad_extra)
+
+                libros[pos_libro].total := libros[pos_libro].total + cantidad_extra
+                libros[pos_libro].disponibles := libros[pos_libro].disponibles + cantidad_extra
+
+                ESC("Ejemplares agregados correctamente.")
+            SINO
+                ESC("Ingrese título:")
+                LEER(titulo)
+                ESC("Ingrese autor:")
+                LEER(autor)
+                ESC("Ingrese cantidad de ejemplares:")
+                LEER(cantidad)
+
+                cant_libros := cant_libros + 1
+                libros[cant_libros].isbn := isbn
+                libros[cant_libros].titulo := titulo
+                libros[cant_libros].autor := autor
+                libros[cant_libros].total := cantidad
+                libros[cant_libros].disponibles := cantidad
+                libros[cant_libros].cantidad_prestamos := 0
+
+                ESC("Libro registrado correctamente.")
+            FINSI
+
+        3:
+            SI cant_usuarios = 0 ENTONCES
+                ESC("No hay usuarios registrados.")
+            SINO
+                SI cant_libros = 0 ENTONCES
+                    ESC("No hay libros registrados.")
+                SINO
+                    ESC("Ingrese DNI del usuario:")
+                    LEER(dni)
+
+                    pos_usuario := 0
+                    PARA i := 1 HASTA cant_usuarios HACER
+                        SI usuarios[i].dni = dni ENTONCES
+                            pos_usuario := i
+                        FINSI
+                    FINPARA
+
+                    SI pos_usuario = 0 ENTONCES
+                        ESC("No existe un usuario con ese DNI.")
+                    SINO
+                        ESC("Ingrese ISBN del libro:")
+                        LEER(isbn)
+
+                        pos_libro := 0
+                        PARA i := 1 HASTA cant_libros HACER
+                            SI libros[i].isbn = isbn ENTONCES
+                                pos_libro := i
+                            FINSI
+                        FINPARA
+
+                        SI pos_libro = 0 ENTONCES
+                            ESC("No existe un libro con ese ISBN.")
+                        SINO
+                            SI libros[pos_libro].disponibles <= 0 ENTONCES
+                                ESC("No hay ejemplares disponibles.")
+                            SINO
+                                ESC("Ingrese día del préstamo:")
+                                LEER(dia_prestamo)
+
+                                cant_prestamos := cant_prestamos + 1
+                                prestamos[cant_prestamos].dni := dni
+                                prestamos[cant_prestamos].isbn := isbn
+                                prestamos[cant_prestamos].dia_prestamo := dia_prestamo
+                                prestamos[cant_prestamos].dia_devolucion := 0
+                                prestamos[cant_prestamos].activo := VERDADERO
+
+                                libros[pos_libro].disponibles := libros[pos_libro].disponibles - 1
+                                libros[pos_libro].cantidad_prestamos := libros[pos_libro].cantidad_prestamos + 1
+                                contador_prestamos_totales := contador_prestamos_totales + 1
+
+                                ESC("Préstamo registrado correctamente.")
+                                ESC("Debe devolverlo antes del día:", dia_prestamo + PLAZO_MAXIMO_DIAS)
+                            FINSI
+                        FINSI
+                    FINSI
+                FINSI
+            FINSI
+
+        4:
+            ESC("Ingrese DNI del usuario:")
+            LEER(dni)
+            ESC("Ingrese ISBN del libro a devolver:")
+            LEER(isbn)
+
+            pos_prestamo := 0
+            PARA i := 1 HASTA cant_prestamos HACER
+                SI prestamos[i].dni = dni Y prestamos[i].isbn = isbn Y prestamos[i].activo = VERDADERO ENTONCES
+                    pos_prestamo := i
+                FINSI
+            FINPARA
+
+            SI pos_prestamo = 0 ENTONCES
+                ESC("No se encontró un préstamo activo con esos datos.")
+            SINO
+                ESC("Ingrese día de devolución:")
+                LEER(dia_devolucion)
+
+                dias_transcurridos := dia_devolucion - prestamos[pos_prestamo].dia_prestamo
+                multa := 0
+
+                SI dias_transcurridos > PLAZO_MAXIMO_DIAS ENTONCES
+                    dias_atraso := dias_transcurridos - PLAZO_MAXIMO_DIAS
+                    multa := dias_atraso * MULTA_POR_DIA
+                    total_recaudado_multas := total_recaudado_multas + multa
+                    ESC("Devolución fuera de término.")
+                    ESC("Multa a pagar:", multa)
+                SINO
+                    ESC("Devolución realizada en término. Sin multa.")
+                FINSI
+
+                prestamos[pos_prestamo].dia_devolucion := dia_devolucion
+                prestamos[pos_prestamo].activo := FALSO
+                contador_devoluciones_totales := contador_devoluciones_totales + 1
+
+                pos_libro := 0
+                PARA i := 1 HASTA cant_libros HACER
+                    SI libros[i].isbn = isbn ENTONCES
+                        pos_libro := i
+                    FINSI
+                FINPARA
+
+                libros[pos_libro].disponibles := libros[pos_libro].disponibles + 1
+
+                ESC("Libro devuelto correctamente.")
+            FINSI
+
+        5:
+            SI cant_libros = 0 ENTONCES
+                ESC("No hay libros cargados.")
+            SINO
+                PARA i := 1 HASTA cant_libros HACER
+                    ESC("ISBN:", libros[i].isbn)
+                    ESC("Título:", libros[i].titulo)
+                    ESC("Autor:", libros[i].autor)
+                    ESC("Disponibles:", libros[i].disponibles, "de", libros[i].total)
+                FINPARA
+            FINSI
+
+        6:
+            existe := FALSO
+
+            PARA i := 1 HASTA cant_prestamos HACER
+                SI prestamos[i].activo = VERDADERO ENTONCES
+                    existe := VERDADERO
+                    ESC("DNI:", prestamos[i].dni)
+                    ESC("ISBN:", prestamos[i].isbn)
+                    ESC("Día de préstamo:", prestamos[i].dia_prestamo)
+                FINSI
+            FINPARA
+
+            SI existe = FALSO ENTONCES
+                ESC("No hay préstamos activos.")
+            FINSI
+
+        7:
+            ESC("Total de préstamos realizados:", contador_prestamos_totales)
+            ESC("Total de devoluciones realizadas:", contador_devoluciones_totales)
+            ESC("Total recaudado en multas:", total_recaudado_multas)
+
+            max_prestamos := -1
+            pos_mas_solicitado := 0
+
+            PARA i := 1 HASTA cant_libros HACER
+                SI libros[i].cantidad_prestamos > max_prestamos ENTONCES
+                    max_prestamos := libros[i].cantidad_prestamos
+                    pos_mas_solicitado := i
+                FINSI
+            FINPARA
+
+            SI pos_mas_solicitado <> 0 Y max_prestamos > 0 ENTONCES
+                ESC("Libro más solicitado:", libros[pos_mas_solicitado].titulo)
+                ESC("Cantidad de préstamos:", max_prestamos)
+            SINO
+                ESC("Todavía no se registraron préstamos.")
+            FINSI
+
+        8:
+            ESC("Gracias por usar el sistema.")
+
+        OTRO:
+            ESC("Opción inválida.")
+
+    FINSEGÚN
+
+HASTA QUE opcion = 8
+
+
+FINACCIÓN
