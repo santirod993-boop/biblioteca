@@ -9,7 +9,7 @@ Trabajo Final Integrador - Algoritmos y Estructuras de Datos - ISI - Ciclo 2026
 - Santiago Rodriguez
 - Fabrizio Zanier 
 
-- (agregar el resto de los integrantes)
+
 
 ## Comisión
 
