@@ -71,8 +71,5 @@ herramienta de apoyo, específicamente para:
 Todo el código generado fue **revisado, probado y comprendido por todos los
 integrantes del grupo**, quienes pueden explicar el funcionamiento de cada
 función, las validaciones implementadas y las decisiones tomadas durante el
-desarrollo. Se realizaron ajustes propios del equipo sobre la propuesta
-inicial (detallar aquí qué cambiaron, si corresponde).
+desarrollo.
 
-
-```
